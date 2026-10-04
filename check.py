@@ -5,7 +5,7 @@
 #    - rs: 보기 4개의 R 코드 중 정답 번호의 결과만 나머지 셋과 달라야 함
 # 3) 공부 탭 예시: code를 R로 실행한 화면 출력이 out(글자)과 같은지 확인
 # R 버전에 따라 결과가 달라지는 코드(난수 sample 등)는 문제로 쓰지 않기
-import collections, json, re, subprocess, sys
+import collections, json, os, re, subprocess, sys
 
 src = subprocess.run(["node", "-e", "global.window={};require('./questions.js');"
                       "console.log(JSON.stringify({u:window.ADSP_UNITS,q:window.ADSP_QUESTIONS,t:window.ADSP_TRAPS||[],s:window.ADSP_STUDY||[]}))"],
@@ -17,7 +17,8 @@ traps = {t["id"] for t in data["t"]}
 errors = []
 
 def run(code):
-    p = subprocess.run(["Rscript", "--vanilla", "-e", code], capture_output=True, text=True, timeout=60)
+    p = subprocess.run(["Rscript", "--vanilla", "-e", code], capture_output=True, text=True, timeout=60,
+                       env={**os.environ, "LC_ALL": "C.UTF-8"})  # 한글 변수 이름을 읽으려면 UTF-8
     if p.returncode: raise RuntimeError((p.stderr.strip().splitlines() or ["R 오류"])[-1])
     return p.stdout
 
