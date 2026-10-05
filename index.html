@@ -139,7 +139,7 @@ function dock(html, handlers, cls = "") {
 // ---------- 첫 화면: 공부 / 연습 / (함정) / 실전 ----------
 function home() {
   EXAMS.forEach(n => store.runs[n] && Date.now() >= store.runs[n].endAt && finish(n, true));
-  const tabs = [["study", "공부"], ["practice", "연습"], ...(TRAPS.length ? [["trap", "함정"]] : []), ...EXAMS.map(n => [String(n), EXAMS.length > 1 ? `실전 ${n}` : "실전"])];
+  const tabs = [["study", "이론"], ["practice", "연습"], ...(TRAPS.length ? [["trap", "함정"]] : []), ...EXAMS.map(n => [String(n), EXAMS.length > 1 ? `실전 ${n}` : "실전"])];
   const tab = tabs.some(([k]) => k === store.tab) ? store.tab : "study";
   show(`
     <div class="row" style="justify-content:space-between"><h1>ADsP <span style="color:var(--accent)">오답킬러</span></h1></div>
