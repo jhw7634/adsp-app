@@ -10,9 +10,9 @@
 <title>ADsP 오답킬러</title>
 <!-- ponytail: 웹폰트·빌드 도구·라이브러리 없음. 기기 기본 글꼴과 순수 CSS/JS만 사용 -->
 <style>
-:root { --bg:#f3f5f8; --card:#fff; --ink:#16213a; --muted:#4f5a73; --line:#d9dee8; --accent:#2446a8; --accent-soft:#e4eafb; --ok:#17875a; --ok-soft:#dff3ea; --bad:#c2372c; --bad-soft:#fbe5e2; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#0f1422; --card:#182033; --ink:#e8ecf6; --muted:#9aa4bd; --line:#2b3550; --accent:#8aa6ff; --accent-soft:#223160; --ok:#4cc893; --ok-soft:#173a2c; --bad:#ff7a6e; --bad-soft:#43201e; color-scheme:dark; } }
-:root[data-theme="dark"] { --bg:#0f1422; --card:#182033; --ink:#e8ecf6; --muted:#9aa4bd; --line:#2b3550; --accent:#8aa6ff; --accent-soft:#223160; --ok:#4cc893; --ok-soft:#173a2c; --bad:#ff7a6e; --bad-soft:#43201e; color-scheme:dark; }
+:root { --soft:#f7f8fa; --pl:34%; --bg:#f3f5f8; --card:#fff; --ink:#16213a; --muted:#4f5a73; --line:#d9dee8; --accent:#2446a8; --accent-soft:#e4eafb; --ok:#17875a; --ok-soft:#dff3ea; --bad:#c2372c; --bad-soft:#fbe5e2; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --soft:#151c2c; --pl:74%; --bg:#0f1422; --card:#182033; --ink:#e8ecf6; --muted:#9aa4bd; --line:#2b3550; --accent:#8aa6ff; --accent-soft:#223160; --ok:#4cc893; --ok-soft:#173a2c; --bad:#ff7a6e; --bad-soft:#43201e; color-scheme:dark; } }
+:root[data-theme="dark"] { --soft:#151c2c; --pl:74%; --bg:#0f1422; --card:#182033; --ink:#e8ecf6; --muted:#9aa4bd; --line:#2b3550; --accent:#8aa6ff; --accent-soft:#223160; --ok:#4cc893; --ok-soft:#173a2c; --bad:#ff7a6e; --bad-soft:#43201e; color-scheme:dark; }
 :root { padding:env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px); } /* 노치·홈 바 자리 비우기 */
 body { margin:0; background:var(--bg); color:var(--ink); font:17px/1.7 system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; word-break:keep-all; overflow-wrap:break-word; }
 main, #dock > div { max-width:34rem; margin:auto; display:flex; flex-direction:column; gap:1.1rem; }
@@ -25,6 +25,7 @@ button:disabled { cursor:default; opacity:.5; }
 .main { background:var(--accent); border-color:var(--accent); color:var(--card); font-weight:700; text-align:center; }
 .main:disabled { background:var(--line); border-color:var(--line); color:var(--muted); opacity:1; }
 .center { text-align:center; }
+input[type="date"] { font:inherit; color:inherit; background:var(--card); border:2px solid var(--line); border-radius:1rem; padding:.8rem 1rem; min-width:0; }
 .row { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; }
 .chip { border-radius:99px; padding:.45rem .9rem; font-size:.9rem; }
 [aria-pressed="true"], [aria-checked="true"] { border-color:var(--accent); background:var(--accent-soft); }
@@ -48,13 +49,18 @@ progress { width:100%; height:.7rem; accent-color:var(--ok); }
 #dock.ok .main { background:var(--ok); border-color:var(--ok); } #dock.bad .main { background:var(--bad); border-color:var(--bad); }
 #dock h2 { color:var(--ok); } #dock.bad h2 { color:var(--bad); }
 .exp { max-height:42vh; overflow-y:auto; line-height:1.75; }
-details.card > summary { list-style:none; } details.card > summary::-webkit-details-marker { display:none; }
+details.card > summary, .part > summary { list-style:none; } details.card > summary::-webkit-details-marker, .part > summary::-webkit-details-marker { display:none; }
+.part details.card { background:var(--soft); border-color:transparent; } /* 이론: 묶음 안 설명은 옅은 회색 */
+.part[open] > summary .chev, details.card[open] > summary .chev { transform:rotate(180deg); }
 .why { display:flex; flex-direction:column; gap:.7rem; margin-top:1.1rem; padding-top:1rem; border-top:1px dashed var(--line); }
 .split { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
 .back { border:0; padding:.3rem; background:none; font-size:1.3rem; }
 .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:.25rem; text-align:center; }
 .stats .big { font-size:1.35rem; }
 .count { flex:none; font-weight:700; color:var(--accent); font-variant-numeric:tabular-nums; }
+.pbar { position:relative; background:var(--line); border-radius:99px; } .pbar i { display:block; height:100%; border-radius:99px; } .pbar b { position:absolute; top:-3px; bottom:-3px; border-left:2px dashed var(--muted); opacity:.6; }
+.dd { display:flex; align-items:center; gap:.6rem; } .dd input { width:1.35rem; height:1.35rem; flex:none; accent-color:var(--ok); } .dd.done > span { text-decoration:line-through; opacity:.6; }
+.pline { display:block; width:100%; text-align:left; background:none; border:0; padding:.45rem 0; color:inherit; font:inherit; }
 .tabs { display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:.25rem; padding:.3rem; background:var(--line); border-radius:1rem; }
 .tabs button { border:0; background:none; padding:.65rem .4rem; text-align:center; font-weight:700; color:var(--muted); border-radius:.75rem; }
 .tabs [aria-selected="true"] { background:var(--card); color:var(--ink); box-shadow:0 1px 3px #0003; }
@@ -64,8 +70,17 @@ details.card > summary { list-style:none; } details.card > summary::-webkit-deta
 table { border-collapse:collapse; font-size:.95rem; white-space:nowrap; }
 caption { text-align:left; font-weight:700; padding-bottom:.25rem; }
 th, td { border:1px solid var(--line); padding:.3rem .7rem; text-align:left; }
-table { width:100%; } td { white-space:normal; min-width:4em; } /* 공부 탭 설명 표: 긴 칸은 줄바꿈 */
 th { background:var(--accent-soft); }
+table { width:100%; } td { white-space:normal; min-width:4em; } /* 이론 탭 설명 표: 긴 칸은 줄바꿈 */
+.pts { margin:.3rem 0 0; padding-left:1.1rem; display:flex; flex-direction:column; gap:.35rem; }
+.pts li::marker { content:"•  "; font-size:.7em; color:var(--muted); }
+/* 이론 그림: 직접 그린 SVG, 색은 앱 색을 따라 다크 모드에서도 보임 */
+.pic { display:block; width:100%; height:auto; max-height:15rem; }
+.pic text { fill:currentColor; text-anchor:middle; } .pic .l { text-anchor:start; } .pic .k { font-size:14px; font-weight:700; } .pic .m { font-size:11px; fill:var(--muted); }
+.pic .b { fill:var(--card); stroke:var(--line); stroke-width:1.5; } .pic .h { fill:var(--accent-soft); stroke:var(--accent); stroke-width:1.5; }
+.pic .ln, .pic .ar { fill:none; stroke:var(--accent); stroke-width:2; } .pic .ar { stroke:var(--muted); } .pic .o { fill:var(--card); stroke:var(--accent); stroke-width:2; }
+.pic .f { fill:var(--accent-soft); } .pic .t { font-size:12px; } .pic .ov { fill:var(--accent); fill-opacity:.15; stroke:var(--accent); stroke-width:1.5; } .pic .no { fill:var(--bad); fill-opacity:.12; stroke:var(--bad); stroke-width:1.5; } .pic .x { stroke:var(--bad); stroke-width:2; fill:none; } .pic .g { fill:var(--ok); } .pic [data-s], .pic [data-o] { transition:opacity .5s; }
+.memo table { white-space:normal; width:100%; font-size:.85rem; } .memo th, .memo td { padding:.3rem .35rem; } .memo td:first-child { font-weight:700; }
 .sheet { display:grid; grid-template-columns:repeat(5,1fr); gap:.45rem; }
 .sheet button { padding:.45rem 0; text-align:center; font-weight:700; line-height:1.3; }
 .sheet small { display:block; font-weight:400; color:var(--muted); }
@@ -84,12 +99,13 @@ const BANK = window.ADSP_QUESTIONS || [], UNITS = window.ADSP_UNITS || [];
 const SUBJ = { 1: "데이터 이해", 2: "데이터 분석 기획", 3: "데이터 분석" }, SUBJS = [1, 2, 3];
 const byId = Object.fromEntries(BANK.map(q => [q.id, q]));
 const PRACTICE = BANK.filter(q => !q.exam && !q.trap);
-const STUDY = window.ADSP_STUDY || []; // 공부 탭: 과목별 쉬운 설명과 예시
-const TRAPS = window.ADSP_TRAPS || [], TRAPQ = BANK.filter(q => q.trap); // 함정 요약과 함정마다 2문제 (아직 없으면 탭도 없음)
+const STUDY = window.ADSP_STUDY || []; // 이론 탭: 과목별 쉬운 설명과 예시
+const FIGS = STUDY.flatMap(l => l.figs || []); // 이론 안의 그림·비교표·외우기 팁
+const TRAPS = window.ADSP_TRAPS || [], TRAPQ = BANK.filter(q => q.trap); // 함정 요약과 함정마다 문제 (아직 없으면 탭도 없음)
 const EXAM = n => BANK.filter(q => q.exam === n).sort((a, b) => a.subject - b.subject); // 실제 시험처럼 1과목부터
-const EXAMS = [...new Set([1, ...BANK.filter(q => q.exam).map(q => q.exam)])].sort((a, b) => a - b); // 실전 회차
+const EXAM_MIN = 90, EXAMS = [...new Set([1, ...BANK.filter(q => q.exam).map(q => q.exam)])].sort((a, b) => a - b); // 실전 회차
 const examCount = qs => SUBJS.map(k => [k, qs.filter(q => q.subject === k).length]); // 과목별 문항 수
-const EXAM_MIN = 90;
+const examName = n => `실전 모의고사${EXAMS.length > 1 ? ` ${n}` : ""}`;
 const C = "①②③④", KEY = "adsp-quiz-v1", $ = s => document.querySelector(s);
 const esc = t => String(t).replace(/[&<>"]/g, c => `&#${c.charCodeAt(0)};`);
 const pct = (c, n) => (n ? Math.round((c / n) * 100) : 0);
@@ -100,11 +116,13 @@ const ans = (q, n) => `${C[n - 1]} ${esc(q.options[n - 1])}`;
 const more = q => (q.why ? `<div class="why"><span class="muted">다른 보기 풀이</span>${q.options.map((o, k) => (q.why[k] ? `<p><strong>${C[k]} ${esc(o)}</strong><br>${esc(q.why[k])}</p>` : "")).join("")}</div>` : "");
 const clock = ms => { const t = Math.max(0, Math.ceil(ms / 1000)); return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`; };
 
-// 이 브라우저에만 저장: 연습 통계(stats, last), 오답(wrong), 실전 기록(exams), 푸는 중인 실전(runs)
-const store = { wrong: {}, stats: { 1: { s: 0, c: 0 }, 2: { s: 0, c: 0 }, 3: { s: 0, c: 0 } }, last: {}, exams: {}, runs: {}, tab: "study" };
+// 이 브라우저에만 저장: 연습 통계(stats, last), 오답(wrong), 맞혀도 다시 볼 문제(saved), 실전 기록(exams), 푸는 중인 실전(runs)
+const store = { saved: {}, wrong: {}, stats: { 1: { s: 0, c: 0 }, 2: { s: 0, c: 0 }, 3: { s: 0, c: 0 } }, last: {}, exams: {}, runs: {}, tab: "study" };
 try { Object.assign(store, JSON.parse(localStorage.getItem(KEY))); } catch (e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} };
 const reviewIds = () => Object.keys(store.wrong).filter(id => byId[id]); // 다시보기: 한 번이라도 틀린 문제
+const bm = on => `<svg width="14" height="17" viewBox="0 0 14 17" aria-hidden="true" style="vertical-align:-2px;margin-right:.35rem"><path d="M1.5 1.5h11v14L7 11.5l-5.5 4z" fill="${on ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`; // 책갈피 아이콘
+const savedIds = () => Object.keys(store.saved).filter(id => byId[id]).sort((a, b) => store.saved[b] - store.saved[a]); // 저장: 맞혔지만 다음에 다시 볼 문제
 const wrongIds = () => reviewIds().filter(id => !store.wrong[id].cleared); // 오답노트: 아직 못 맞힌 문제
 
 const prefs = { status: "all", freq: "all" };
@@ -136,28 +154,40 @@ function dock(html, handlers, cls = "") {
   fit();
 }
 
-// ---------- 첫 화면: 공부 / 연습 / (함정) / 실전 ----------
+// ---------- 첫 화면: 이론 / 연습 / (함정) / 실전 / 분석 ----------
 function home() {
   EXAMS.forEach(n => store.runs[n] && Date.now() >= store.runs[n].endAt && finish(n, true));
-  const tabs = [["study", "이론"], ["practice", "연습"], ...(TRAPS.length ? [["trap", "함정"]] : []), ...EXAMS.map(n => [String(n), EXAMS.length > 1 ? `실전 ${n}` : "실전"])];
+  const tabs = [["study", "이론"], ["practice", "연습"], ...(TRAPS.length ? [["trap", "함정"]] : []), ["exam", "실전"], ["stat", "분석"]];
+  if (/^\d+$/.test(store.tab)) store.tab = "exam"; // 예전 실전 회차 탭은 합친 실전 탭으로
   const tab = tabs.some(([k]) => k === store.tab) ? store.tab : "study";
   show(`
-    <div class="row" style="justify-content:space-between"><h1>ADsP <span style="color:var(--accent)">오답킬러</span></h1></div>
+    <div class="row" style="justify-content:space-between"><h1>ADsP <span style="color:var(--accent)">오답킬러</span></h1>${dleft() !== null && dleft() >= 0 ? `<span class="tag" style="font-size:1rem;padding:.25rem .7rem">${dleft() ? "D-" + dleft() : "D-day"}</span>` : ""}</div>
     <div class="tabs" role="tablist">
       ${tabs.map(([k, l]) => `<button role="tab" data-tab="${k}" aria-selected="${tab === k}">${l}</button>`).join("")}
     </div>
-    ${tab === "study" ? studyHome() : tab === "practice" ? practiceHome() : tab === "trap" ? trapHome() : examHome(+tab)}`, {
+    ${tab === "study" ? studyHome() : tab === "practice" ? practiceHome() : tab === "trap" ? trapHome() : tab === "stat" ? statHome() : examTab()}`, {
     "[data-tab]": b => { store.tab = b.dataset.tab; save(); home(); },
     "#notes": () => notes("wrong"),
     "#review": () => notes("review"),
+    "#saved": () => notes("saved"),
     "#all": () => { prefs.unit = "all"; list(); },
     "#go": () => { const todo = PRACTICE.filter(q => !(q.id in store.last)); todo.length ? start(todo, false) : (prefs.unit = "all", list()); },
     "[data-unit]": b => { prefs.unit = b.dataset.unit; list(); },
     "#tgo": () => { const todo = TRAPQ.filter(q => !(q.id in store.last)); start(todo.length ? todo : shuffle(TRAPQ), false); },
     "[data-trap]": b => start(TRAPQ.filter(q => q.trap === b.dataset.trap), false),
-    "#start": () => startExam(+tab, !store.runs[tab]),
-    "#restart": () => startExam(+tab, true),
-    "#result": () => review(+tab),
+    "[data-start]": b => { const n = +b.dataset.start; startExam(n, !store.runs[n]); },
+    "[data-restart]": b => startExam(+b.dataset.restart, true),
+    "[data-result]": b => review(+b.dataset.result),
+    "[data-sf]": b => { prefs.stat = b.dataset.sf; home(); },
+    "#plan": () => { if ($("#dday").value) { store.dday = $("#dday").value; save(); home(); } },
+    "#dchange": () => { delete store.dday; save(); home(); },
+    "[data-dd]": c => { const d = c.dataset.dd, on = c.checked; store.done = store.done || {}; on ? (store.done[d] = 1) : delete store.done[d]; save(); document.querySelectorAll(`[data-dd="${d}"]`).forEach(x => { x.checked = on; x.parentElement.classList.toggle("done", on); }); }, // 플랜 날짜 완료 체크 → 줄 긋기
+    "[data-plan]": b => { const d = $("#dday")?.value; store.plan = +b.dataset.plan; save(); home(); if (d) $("#dday").value = d; },
+    "[data-task]": b => { const [k, v] = b.dataset.task.split(":"); k === "unit" ? (prefs.unit = v, list()) : k === "exam" ? startExam(+v, !store.runs[+v]) : k === "high" ? goHigh() : k === "notes" ? notes("wrong") : k === "brief" ? brief() : (store.tab = k, save(), home()); },
+    "#hgo": goHigh,
+    "#brief": () => brief(),
+    "[data-step]": b => step(b),
+    "#reset": () => { if (confirm("푼 기록·오답노트·저장·실전 결과를 모두 지우고 처음부터 시작할까요?")) { localStorage.removeItem(KEY); location.reload(); } },
   });
 }
 
@@ -172,35 +202,96 @@ function practiceHome() {
       <button id="go" class="main" ${PRACTICE.length ? "" : "disabled"}>${!PRACTICE.length ? "문제를 준비하고 있어요" : left ? (done ? `이어서 풀기 · 남은 ${left}문제` : "첫 문제 풀기") : "전체 문제 다시 보기"}</button>
     </div>
     <div class="split">${small("notes", "오답노트", wrongIds().length, "bad")}${small("review", "다시보기", reviewIds().length, "accent")}</div>
+    ${savedIds().length ? small("saved", `${bm(1)}저장한 문제`, savedIds().length, "accent") : ""}
     <div class="row" style="justify-content:space-between;margin-top:.4rem"><h2>단원별로 풀기</h2><button id="all" class="chip">전체 ${PRACTICE.length}문제</button></div>
     ${SUBJS.map(k => `<h3 class="muted" style="margin:0">${k}과목 · ${SUBJ[k]}</h3>
       ${UNITS.filter(u => u.subject === k).map(unitCard).join("")}`).join("")}`;
 }
 
-// 공부: 묶음별 설명 카드. 열면 쉬운 설명, 예시 표, R 코드, 실행 결과
+// 이론: 묶음별 설명 카드. 열면 쉬운 설명, 예시 표, R 코드, 실행 결과
 const grid = (t, name) => `<div class="scroll"><table>${name ? `<caption>${esc(name)}</caption>` : ""}<tr>${t.cols.map(c => `<th>${esc(c)}</th>`).join("")}</tr>
   ${t.rows.length ? t.rows.map(r => `<tr>${r.map(v => (v === null ? '<td class="muted">NULL</td>' : `<td>${esc(v)}</td>`)).join("")}</tr>`).join("") : `<tr><td class="muted" colspan="${t.cols.length}">결과 없음 (0줄)</td></tr>`}</table></div>`;
-function studyHome() {
-  return `
-    <p class="muted">${STUDY.length ? "세 과목을 처음부터 쉽게 정리했어요. 제목을 누르면 설명이 열려요." : "쉬운 설명을 준비하고 있어요."}</p>
-    ${[...new Set(STUDY.map(l => l.part))].map(part => `<h3 class="muted" style="margin:.4rem 0 0">${esc(part)}</h3>
-    ${STUDY.filter(l => l.part === part).map(l => `
-    <details class="card">
-      <summary style="cursor:pointer"><strong><span style="color:var(--accent)">${STUDY.indexOf(l) + 1}.</span> ${esc(l.title)}</strong><br><span class="muted">${esc(l.sum)}</span></summary>
+// 설명 문단: 줄바꿈이 있으면 첫 줄은 리드, 나머지는 작은 점 불릿 ("용어 : 설명"이면 용어를 굵게)
+const para = p => { const [lead, ...li] = p.split("\n");
+  if (li.length && li.every(x => x.includes(" : "))) return `<div class="stack memo" style="gap:.4rem"><p>${esc(lead)}</p><table>${li.map(x => { const k = x.indexOf(" : "); return `<tr><td>${esc(x.slice(0, k))}</td><td>${esc(x.slice(k + 3))}</td></tr>`; }).join("")}</table></div>`;
+  return `<div><p>${esc(lead)}</p>${li.length ? `<ul class="pts">${li.map(x => { const k = x.indexOf(" : "); return `<li>${k > 0 ? `<strong>${esc(x.slice(0, k))}</strong> : ${esc(x.slice(k + 3))}` : esc(x)}</li>`; }).join("")}</ul>` : ""}</div>`; };
+// 이론 설명 한 개: 그림, 설명, 비교표, 예시, 시험 포인트
+const lesson = l => `
       <div class="stack" style="margin-top:.8rem">
-        ${l.body.map(p => `<p>${esc(p)}</p>`).join("")}
+        ${(l.figs || []).map(f => fig(f, 1)).join("")}
+        ${l.body.map(para).join("")}
+        ${(l.figs || []).map(f => fig(f)).join("")}
         ${l.ex.map(e => `<div class="stack" style="border-top:1px dashed var(--line);padding-top:.8rem">
           <strong>${esc(e.say)}</strong>
           ${Object.entries(e.data || {}).map(([n, t]) => grid(t, n)).join("")}
           ${e.code ? `<pre>${esc(e.code)}</pre>` : ""}
           ${typeof e.out === "string" ? `<span class="muted">실행 결과</span><pre>${esc(e.out)}</pre>` : e.out ? grid(e.out, "결과") : ""}
         </div>`).join("")}
-        ${l.tip ? `<p class="card" style="background:var(--accent-soft);border:0"><strong>시험 포인트</strong><br>${esc(l.tip)}</p>` : ""}
+        ${l.tip ? `<p class="card" style="background:var(--accent-soft);border:0"><strong>시험 포인트</strong><br>${esc(l.tip)}</p>` : ""}`;
+function studyHome() {
+  if (!STUDY.length) return `<p class="muted">쉬운 설명을 준비하고 있어요.</p>`;
+  return `
+    ${[...new Set(STUDY.map(l => l.part))].map((part, i, all) => { const ls = STUDY.filter(l => l.part === part), [subj, name] = part.includes(" · ") ? part.split(" · ") : ["", part];
+      const head = subj && subj !== all[i - 1]?.split(" · ")[0] ? `<h2 style="margin-top:.6rem">${esc(subj)}</h2>` : ""; // 과목 이름은 위 제목으로 한 번만
+      return `${head}
+    <details class="part">
+      <summary class="card row" style="justify-content:space-between;flex-wrap:nowrap;cursor:pointer"><span class="stack" style="gap:.1rem"><h2>${esc(name)}</h2><span class="muted">설명 ${ls.length}개</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+      <div class="stack" style="margin-top:.6rem">
+    ${ls.map(l => `
+    <details class="card">
+      <summary style="cursor:pointer"><strong><span style="color:var(--accent)">${STUDY.indexOf(l) + 1}.</span> ${esc(l.title)}</strong><br><span class="muted">${esc(l.sum)}</span></summary>
+      ${lesson(l)}
       </div>
-    </details>`).join("")}`).join("")}`;
+    </details>`).join("")}
+      </div>
+    </details>`; }).join("")}`;
 }
 
-// 함정: 요약을 읽고 바로 그 함정 2문제로 확인. 정답률은 연습과 따로 (stats.t)
+// 이론 그림(설명 위)과 비교표·외우기 팁(설명 아래). steps가 있는 그림은 이전/다음 버튼으로 한 단계씩
+const fig = (f, top) => { const i = FIGS.indexOf(f); return top ? (f.pic ? `<div class="stack">
+  <div id="fig${i}">${f.pic.replace("<svg", '<svg class="pic" role="img" aria-label="그림"')}</div>
+  ${f.steps ? `<strong id="cap${i}" style="color:var(--accent)">${esc(f.steps[0])}</strong>  <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:.5rem;align-items:center"><button data-step="${i}:-1" class="center">◀ 이전</button><span id="cnt${i}" class="muted">1 / ${f.steps.length}</span><button data-step="${i}:1" class="center">다음 ▶</button></div>` : ""}</div>` : "")
+  : f.table || f.memo ? `<div class="stack memo">${f.table ? grid(f.table) : ""}${f.table2 ? grid(f.table2) : ""}
+  ${f.memo ? `<p class="card" style="background:var(--ok-soft);border:0"><strong>외우기 팁</strong><br>${esc(f.memo)}</p>` : ""}</div>` : ""; };
+// 그림의 k단계 보여 주기: data-s는 k단계부터, data-o는 적힌 단계에서만 보임
+const at = {}; // 그림마다 지금 단계
+function stepTo(i, k) {
+  const fig = $("#fig" + i);
+  if (!fig) return false;
+  fig.querySelectorAll("[data-s]").forEach(e => (e.style.opacity = +e.dataset.s <= k ? 1 : 0.12));
+  fig.querySelectorAll("[data-o]").forEach(e => (e.style.opacity = e.dataset.o.split(" ").includes(String(k)) ? 1 : 0));
+  $("#cap" + i).textContent = FIGS[i].steps[k];
+  $("#cnt" + i).textContent = `${k + 1} / ${FIGS[i].steps.length}`;
+  at[i] = k;
+  return true;
+}
+function step(b) { // 이전/다음 단계: 원하는 만큼 천천히 한 단계씩
+  const [i, d] = b.dataset.step.split(":").map(Number), n = FIGS[i].steps.length;
+  stepTo(i, Math.min(n - 1, Math.max(0, (at[i] || 0) + d)));
+}
+// 문제 주제(topic)로 이론 설명 찾기: 단원 안에서 처음 맞는 설명, 없으면 그 단원의 기본 설명 (TOPIC이 없는 첫 설명)
+const TOPIC = { l01: "DIKW", l02: "암묵지", l04: "웨어하우스|OLTP|기업 내부", l06: "활용 기법", l07: "위기|비식별", l10: "방법론|KDD|CRISP", l12: "프로젝트|과제 관리",
+  l14: "준비도|성숙도", l15: "조직|거버넌스", l17: "행렬|리스트|데이터 프레임", l18: "seq|문자열|조건|apply|요인", l20: "이상값|요약 변수",
+  l21: "표본추출|척도", l22: "분포|중심극한", l24: "상관", l26: "다중공선성|변수 선택|규제|모형 비교|모형 선택", l28: "주성분|다차원",
+  l30: "앙상블|신경망|랜덤|붓스트랩", l31: "혼동|F1|ROC|평가", l33: "연관|향상도|Apriori" };
+const AWAY = { "위험 대응": "l12", "결측값 계산": "l19" }; // 설명이 다른 단원에 있는 주제
+const lessonOf = q => { const ls = STUDY.filter(l => l.unit === q.unit); return STUDY.find(l => l.id === AWAY[q.topic]) || ls.find(l => TOPIC[l.id] && new RegExp(TOPIC[l.id]).test(q.topic)) || ls.find(l => !TOPIC[l.id]); };
+function theory(l) { // 문제 풀다가 이론 보기: ←로 풀던 문제로 돌아감 (기록은 그대로)
+  show(`<div class="row"><button id="back" aria-label="문제로 돌아가기" class="back">←</button><span class="muted">이론 · ${esc(l.part)}</span></div>
+    <h2><span style="color:var(--accent)">${STUDY.indexOf(l) + 1}.</span> ${esc(l.title)}</h2><span class="muted">${esc(l.sum)}</span>
+    ${lesson(l)}
+    <button id="back2" class="main">문제로 돌아가기</button>`, { "#back": question, "#back2": question, "[data-step]": b => step(b) });
+  (l.figs || []).forEach(f => f.steps && stepTo(FIGS.indexOf(f), 0));
+}
+document.addEventListener("toggle", e => e.target.querySelectorAll?.("[id^=fig]").forEach(f => FIGS[+f.id.slice(3)].steps && stepTo(+f.id.slice(3), 0)), true); // 열 때 첫 단계로
+
+// 함정 그림·표: 예시가 모두 '식 → 결과' 줄이면 표로 (맨 앞 줄에 →가 없으면 표 제목), 아니면 코드 상자
+const exTable = ex => { const ls = ex.split("\n"), cap = ls[0].includes("→") ? "" : ls.shift();
+  if (!ls.length || !ls.every(x => x.includes("→"))) return `<pre>${esc(ex)}</pre>`;
+  return `<div class="memo">${grid({ cols: ["이렇게 하면", "결과"], rows: ls.map(x => { const k = x.indexOf("→"); return [x.slice(0, k).trim(), x.slice(k + 1).trim()]; }) }, cap)}</div>`; };
+const trapMore = t => `${t.pic ? t.pic.replace("<svg", '<svg class="pic" role="img" aria-label="그림"') : ""}${t.table ? `<div class="memo">${grid(t.table, t.table.cap)}</div>` : ""}${t.ex ? exTable(t.ex) : ""}`;
+
+// 함정: 요약을 읽고 바로 그 함정 문제로 확인. 정답률은 연습과 따로 (stats.t)
 function trapHome() {
   const st = store.stats.t || { s: 0, c: 0 }, done = TRAPQ.filter(q => q.id in store.last).length, left = TRAPQ.length - done;
   return `
@@ -209,13 +300,13 @@ function trapHome() {
       <progress value="${done}" max="${TRAPQ.length}"></progress>
       <button id="tgo" class="main">${left ? (done ? `이어서 풀기 · 남은 ${left}문제` : `함정 퀴즈 ${TRAPQ.length}문제 풀기`) : "섞어서 다시 풀기"}</button>
     </div>
-    <p class="muted">시험 직전에 훑어보는 함정 ${TRAPS.length}개예요. 제목을 누르면 요약이 열리고, 바로 2문제로 확인할 수 있어요.</p>
+    <p class="muted">시험 직전에 훑어보는 함정 ${TRAPS.length}개예요. 제목을 누르면 요약이 열리고, 바로 문제로 확인할 수 있어요.</p>
     ${TRAPS.map((t, i) => { const qs = TRAPQ.filter(q => q.trap === t.id); return `
     <details class="card">
       <summary class="row" style="justify-content:space-between;flex-wrap:nowrap;cursor:pointer"><strong><span style="color:var(--bad)">${i + 1}.</span> ${esc(t.title)}</strong><span class="count">${qs.filter(q => q.id in store.last).length} / ${qs.length}</span></summary>
       <div class="stack" style="margin-top:.8rem">
         <p>${esc(t.body)}</p>
-        ${t.ex ? `<pre>${esc(t.ex)}</pre>` : ""}
+        ${trapMore(t)}
         <button data-trap="${t.id}" class="center">이 함정 ${qs.length}문제 풀기</button>
       </div>
     </details>`; }).join("")}`;
@@ -223,25 +314,129 @@ function trapHome() {
 
 function examHome(n) {
   const qs = EXAM(n), rec = store.exams[n], run = store.runs[n];
-  if (!qs.length) return `<p class="card muted center">실전 모의고사 문제를 준비하고 있어요.</p>`;
+  if (!qs.length) return `<p class="card muted center">${examName(n)} 문제를 준비하고 있어요.</p>`;
+  const sub = run ? `<span style="color:var(--accent)">푸는 중 · 남은 시간 ${clock(run.endAt - Date.now())}</span>` : rec ? `최근 ${rec.last.score}점 · <span style="color:var(--${rec.last.pass ? "ok" : "bad"})">${rec.last.pass ? "합격" : "불합격"}</span>` : `${qs.length}문항 · ${EXAM_MIN}분`;
+  // 처음엔 회차 이름과 한 줄 상태만, 누르면 안내와 버튼
   return `
-    <div class="card stack">
-      <h2>실전 모의고사${EXAMS.length > 1 ? ` ${n}` : ""}</h2>
-      <div class="stats" style="grid-template-columns:repeat(3,1fr)">
-        <div><div class="big">${qs.length}</div><span class="muted">문항</span></div>
-        <div><div class="big">${EXAM_MIN}분</div><span class="muted">시험 시간</span></div>
-        <div><div class="big">60점</div><span class="muted">합격</span></div>
+    <details class="card">
+      <summary class="row" style="justify-content:space-between;flex-wrap:nowrap;cursor:pointer"><span class="stack" style="gap:.1rem"><h2>${examName(n)}</h2><span class="muted">${sub}</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+      <div class="stack" style="margin-top:1rem">
+        <div class="stats" style="grid-template-columns:repeat(3,1fr)">
+          <div><div class="big">${qs.length}</div><span class="muted">문항</span></div>
+          <div><div class="big">${EXAM_MIN}분</div><span class="muted">시험 시간</span></div>
+          <div><div class="big">60점</div><span class="muted">합격</span></div>
+        </div>
+        <p class="muted">${examCount(qs).map(([k, c]) => `${k}과목 ${c}문항(${c * 2}점)`).join(", ")}이고 과목별 40% 미만이면 과락이에요. 다 풀고 제출하면 한 번에 채점해요.</p>
+        ${rec ? `<div class="stats" style="grid-template-columns:repeat(3,1fr)">
+          <div><div class="big" style="color:var(--${rec.last.pass ? "ok" : "bad"})">${rec.last.score}</div><span class="muted">최근 점수</span></div>
+          <div><div class="big">${rec.best}</div><span class="muted">최고 점수</span></div>
+          <div><div class="big">${rec.count}회</div><span class="muted">응시</span></div>
+        </div>` : ""}
+        <button data-start="${n}" class="main">${run ? "이어서 풀기" : rec ? "다시 응시하기" : "시험 시작"}</button>
+        ${run ? `<button data-restart="${n}" class="center">처음부터 다시 풀기</button>` : ""}
+        ${rec ? `<button data-result="${n}" class="center">지난 결과와 해설 보기</button>` : ""}
       </div>
-      <p class="muted">실제 시험과 같아요. ${examCount(qs).map(([k, c]) => `${k}과목 ${c}문항(${c * 2}점)`).join(", ")}이고 과목별 40% 미만이면 과락이에요. 다 풀고 제출하면 한 번에 채점해요.</p>
+    </details>`;
+}
+
+// ---------- 실전 탭: 합격 플랜(20일·30일, D-day), 자주 나와요 문제, 실전 회차, 시험 전날 요약 카드 ----------
+const HIGH = PRACTICE.filter(q => q.freq === "high"); // 자주 나와요(빈도 높음) 연습 문제
+const goHigh = () => { const todo = HIGH.filter(q => !(q.id in store.last)); start(todo.length ? todo : shuffle(HIGH), false); };
+function examTab() {
+  const hd = HIGH.filter(q => q.id in store.last).length;
+  const go = (id, h2, sub, act) => `<button id="${id}" class="card row" style="justify-content:space-between;flex-wrap:nowrap"><span class="stack" style="gap:.1rem"><h2>${h2}</h2><span class="muted">${sub}</span></span><span class="count">${act} ›</span></button>`;
+  return `${planCard()}
+    ${go("hgo", `자주 나와요 ${HIGH.length}문제`, `${hd} / ${HIGH.length} 풀었어요`, hd < HIGH.length ? "풀기" : "다시 풀기")}
+    ${EXAMS.map(examHome).join("")}
+    ${go("brief", "시험 전날 요약 카드", `${TRAPS.length ? `함정 ${TRAPS.length}장 + ` : ""}틀렸던 문제 ${reviewIds().length}장`, "보기")}`;
+}
+
+// 합격 플랜: 시험일(store.dday)까지 남은 날(최대 store.plan일, 기본 20일)에 할 일을 고르게 나눠 보여줌. 할 일의 ✓는 풀이 기록으로 판단
+const today = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+const fmt = d => `${d.getMonth() + 1}월 ${d.getDate()}일(${"일월화수목금토"[d.getDay()]})`;
+const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const dleft = () => (store.dday ? Math.round((new Date(store.dday + "T00:00") - today()) / 864e5) : null);
+const allDone = qs => qs.every(q => q.id in store.last);
+const tasks = () => {
+  const units = k => UNITS.filter(u => u.subject === k).map(u => ({ t: `연습 · ${u.title}`, go: "unit:" + u.id, ok: allDone(PRACTICE.filter(q => q.unit === u.id)) }));
+  const mids = [{ t: "오답노트 다시 풀기", go: "notes", ok: reviewIds().length > 0 && !wrongIds().length }, ...(TRAPQ.length ? [{ t: `함정 퀴즈 ${TRAPQ.length}문제`, go: "trap", ok: allDone(TRAPQ) }] : []), { t: `자주 나와요 ${HIGH.length}문제`, go: "high", ok: allDone(HIGH) }];
+  return [...SUBJS.flatMap(k => [{ t: `이론 ${k}과목 읽기`, go: "study" }, ...units(k)]),
+    ...EXAMS.flatMap((n, i) => [{ t: examName(n), go: "exam:" + n, ok: !!store.exams[n] }, ...(mids[i] ? [mids[i]] : [])]), { t: "시험 전날 요약 카드 보기", go: "brief" }];
+};
+function planCard() {
+  const left = dleft(), P = store.plan || 20;
+  const len = `<div class="row">${[20, 30].map(n => `<button class="chip" data-plan="${n}" aria-pressed="${P === n}">${n}일 플랜</button>`).join("")}</div>`;
+  if (left === null) return `<div class="card stack"><h2>${P}일 합격 플랜</h2>${len}<p class="muted">시험일을 넣으면 D-day와 날짜별 할 일이 나와요.</p><div class="split" style="grid-template-columns:1fr auto"><input id="dday" type="date" min="${iso(today())}" aria-label="시험일"><button id="plan" class="main">만들기</button></div></div>`;
+  const head = `<span class="row" style="justify-content:space-between"><h2>${left > 0 ? `D-${left}` : left ? "시험이 지났어요" : "D-day"}</h2><button id="dchange" class="chip">${fmt(new Date(store.dday + "T00:00"))} 시험 · 바꾸기</button></span>`;
+  if (left <= 0) return `<div class="card stack">${head}<p class="muted">${left ? "다음 시험일로 바꿔 주세요." : "오늘이 시험날이에요. 요약 카드만 한 번 훑고 가세요!"}</p></div>`;
+  const T = tasks(), span = Math.min(P, left), k = span - left; // k: 오늘이 플랜 며칠째인지 (음수면 아직 시작 전)
+  const day = j => { const d = T.filter((_, i) => Math.round((i * (span - 1)) / (T.length - 1)) === j); return d.length ? d : [{ t: "복습 · 오답노트 다시 풀기", go: "notes" }]; }; // 할 일보다 날이 많으면 빈 날은 복습
+  const ck = j => { const d = iso(addDays(today(), j - k)), on = !!store.done?.[d]; return [on ? " done" : "", `<input type="checkbox" data-dd="${d}" aria-label="${fmt(addDays(today(), j - k))} 완료"${on ? " checked" : ""}>`]; }; // 오른쪽 체크박스
+  const line = x => `<button data-task="${x.go}" class="pline row" style="display:flex;flex-wrap:nowrap"><span style="color:var(--${x.ok ? "ok" : "muted"})">${x.ok ? "✓" : "○"}</span><span style="flex:1">${esc(x.t)}</span><span class="muted">›</span></button>`;
+  return `<div class="card stack" style="gap:.3rem">${head}${len}
+    ${k < 0 ? `<p class="muted">${span}일 플랜은 ${fmt(addDays(today(), -k))}부터 시작해요. 그때까지 이론 탭을 읽어 두세요.</p>` : `<div class="dd${ck(k)[0]}" style="margin-top:.4rem"><span style="flex:1"><strong>오늘 할 일 · ${k + 1}일째</strong></span>${ck(k)[1]}</div>${day(k).map(line).join("")}`}
+    <details><summary class="muted" style="cursor:pointer;margin-top:.4rem">전체 일정 보기</summary>${[...Array(span)].map((_, j) => `<p class="muted dd${ck(j)[0]}" style="margin-top:.3rem"><span style="flex:1"><strong>${fmt(addDays(today(), j - k))}</strong> ${day(j).map(x => esc(x.t)).join(", ")}</span>${ck(j)[1]}</p>`).join("")}</details></div>`;
+}
+
+// 시험 전날 요약 카드: 함정 요약과 틀렸던 문제의 핵심을 한 장씩 넘겨 보기
+function brief(i = 0) {
+  const cards = [...TRAPS.map(t => ({ tag: "함정", head: t.title, body: t.body, t })), ...reviewIds().map(id => { const q = byId[id]; return { tag: `${q.subject}과목 · ${q.topic}`, head: q.q, code: q.code, ans: ans(q, q.answer), body: q.exp }; })];
+  const c = cards[i], trap = i < TRAPS.length;
+  if (!c) return show(`<div class="row"><button id="out" aria-label="나가기" class="back">←</button><h2>시험 전날 요약 카드</h2></div>
+    <p class="card muted center" style="padding:2.5rem 1rem">아직 틀렸던 문제가 없어요.<br>문제를 풀다 틀리면 여기에 카드로 모여요.</p>`, { "#out": home });
+  show(`
+    <div class="row bar"><button id="out" aria-label="나가기" class="back">✕</button><strong>${i + 1} / ${cards.length}</strong><span class="muted">${trap ? "함정" : "틀렸던 문제"}</span></div>
+    <div class="card stack" style="padding:1.5rem 1.25rem">
+      <span class="tag ${trap ? "bad" : ""}" style="align-self:flex-start">${esc(c.tag)}</span>
+      <h2>${esc(c.head)}</h2>
+      ${c.code ? `<pre>${esc(c.code)}</pre>` : ""}
+      ${c.ans ? `<strong style="color:var(--ok)">정답 ${c.ans}</strong>` : ""}
+      <p>${esc(c.body)}</p>
+      ${c.t ? trapMore(c.t) : ""}
+    </div>`, { "#out": home });
+  dock(`<div class="split"><button id="prev" class="center" ${i ? "" : "disabled"}>이전</button><button id="next" class="main">${i + 1 < cards.length ? "다음 카드" : "끝 · 돌아가기"}</button></div>`,
+    { "#prev": () => brief(i - 1), "#next": () => (i + 1 < cards.length ? brief(i + 1) : home()) });
+}
+
+// 분석 (전체/연습/함정/실전 골라 보기): 연습·함정·실전에서 고른 답(실전은 최근 제출)으로 정답률 막대. 낮은 단원부터, 점선은 합격선 60%
+const GOAL = 60, PTS = { 1: 20, 2: 20, 3: 60 }, NEED = { 1: 5, 2: 5, 3: 10 }; // 과목별 배점과 예측에 필요한 문제 수
+const hue = r => (r < GOAL ? 8 : 225); // 합격선 아래는 코랄, 넘으면 파랑
+const pbar = (r, h = ".8rem", c = hue(r)) => `<div class="pbar" style="height:${h};background:hsl(${c} 70% 55% / .12)"><i style="width:${r}%;background:linear-gradient(90deg, hsl(${c} 80% 60% / .15), hsl(${c} 75% 55% / ${(.25 + r / 200).toFixed(2)}))"></i><b style="left:${GOAL}%"></b></div>`; // 반투명 그라데이션
+const prate = r => `<strong style="color:hsl(${hue(r)} 50% var(--pl))">${r}%</strong>`;
+function statHome() {
+  const res = { ...store.last };
+  EXAMS.forEach(n => { const a = store.exams[n]?.last?.answers || {}; EXAM(n).forEach(q => { if (a[q.id]) res[q.id] = a[q.id] === q.answer; }); });
+  const sf = prefs.stat || "all", pool = sf === "practice" ? PRACTICE : sf === "trap" ? TRAPQ : sf === "exam" ? BANK.filter(q => q.exam) : BANK;
+  const chips = [["all", "전체"], ["practice", "연습"], ...(TRAPQ.length ? [["trap", "함정"]] : []), ["exam", "실전"]].map(([v, l]) => `<button class="chip" data-sf="${v}" aria-pressed="${sf === v}">${l}</button>`).join("");
+  const tally = qs => { const d = qs.filter(q => q.id in res && pool.includes(q)); return { n: d.length, r: pct(d.filter(q => res[q.id]).length, d.length) }; };
+  const all = tally(BANK);
+  if (!all.n) return `<div class="row">${chips}</div><p class="card muted center">${sf !== "exam" ? "문제를 풀면" : EXAMS.some(n => store.runs[n]) ? "푸는 중인 실전 모의고사를 끝까지 풀고 제출하면" : "실전 모의고사를 제출하면"} 여기에 단원별 정답률 그래프가 나와요.</p>`;
+  const units = UNITS.map(u => ({ u, t: tally(BANK.filter(q => q.unit === u.id)) }));
+  const done = units.filter(x => x.t.n).sort((a, b) => a.t.r - b.t.r), todo = units.filter(x => !x.t.n);
+  // 합격 예측: 과목별 정답률을 실제 배점(1과목 20점, 2과목 20점, 3과목 60점)으로 환산
+  const sub = k => { const d = BANK.filter(q => q.subject === k && q.id in res); return { k, n: d.length, r: pct(d.filter(q => res[q.id]).length, d.length) }; };
+  const S = SUBJS.map(sub), guess = Math.round(S.reduce((a, x) => a + (x.r * PTS[x.k]) / 100, 0)), enough = S.every(x => x.n >= NEED[x.k]), low = S.find(x => x.r < 40);
+  const verdict = guess < GOAL ? `합격선(60점)까지 ${GOAL - guess}점 모자라요` : low ? `${low.k}과목 과락(40% 미만) 위험이 있어요` : "지금 실력이면 합격권이에요";
+  return `
+    <div class="card stack" style="gap:.3rem">
+      <span class="row" style="justify-content:space-between"><h2>합격 예측</h2>${enough ? `<span class="big" style="color:hsl(${hue(guess)} 50% var(--pl))">${guess}점</span>` : ""}</span>
+      ${enough ? `<span>${verdict}</span><span class="muted">${S.map(x => `${x.k}과목 ${x.r}% × ${PTS[x.k]}점`).join(" + ")}으로 계산한 예상 점수예요</span>` : `<span class="muted">${S.map(x => `${x.k}과목 ${NEED[x.k]}문제`).join(", ")} 이상 풀면 예상 점수가 나와요 (지금 ${S.map(x => x.n + "개").join(", ")})</span>`}
     </div>
-    ${rec ? `<div class="card stats" style="grid-template-columns:repeat(3,1fr)">
-      <div><div class="big" style="color:var(--${rec.last.pass ? "ok" : "bad"})">${rec.last.score}</div><span class="muted">최근 점수 · ${rec.last.pass ? "합격" : "불합격"}</span></div>
-      <div><div class="big">${rec.best}</div><span class="muted">최고 점수</span></div>
-      <div><div class="big">${rec.count}회</div><span class="muted">응시</span></div>
-    </div>` : ""}
-    <button id="start" class="main">${run ? `이어서 풀기 · 남은 시간 ${clock(run.endAt - Date.now())}` : rec ? "다시 응시하기" : "시험 시작"}</button>
-    ${run ? `<button id="restart" class="center">처음부터 다시 풀기</button>` : ""}
-    ${rec ? `<button id="result" class="center">지난 결과와 해설 보기</button>` : ""}`;
+    <div class="row">${chips}</div>
+    <div class="card stack">
+      <span class="row" style="justify-content:space-between"><h2>합격선까지</h2><span class="muted">전체 ${prate(all.r)}</span></span>
+      ${pbar(all.r, "1.6rem")}
+      <span class="muted">${all.r >= GOAL ? "합격선을 넘었어요" : `합격선까지 ${GOAL - all.r}% 남았어요`} · 푼 문제 ${all.n}개</span>
+      ${SUBJS.map(k => { const t = tally(BANK.filter(q => q.subject === k)); return t.n ? `<span class="row" style="justify-content:space-between"><span>${k}과목</span>${prate(t.r)}</span>${pbar(t.r, ".6rem")}` : ""; }).join("")}
+    </div>
+    <div class="card stack" style="gap:.2rem">
+      <span class="row" style="justify-content:space-between"><h2>단원별 정답률</h2><span class="muted">낮은 순</span></span>
+      ${done.map(({ u, t }) => `<button data-unit="${u.id}" class="pline"><span class="row" style="justify-content:space-between;flex-wrap:nowrap"><span>${esc(u.title)}</span>${prate(t.r)}</span>${pbar(t.r)}</button>`).join("")}
+      ${todo.length ? `<p class="muted" style="margin-top:.5rem">아직 안 푼 단원: ${todo.map(x => esc(x.u.title)).join(", ")}</p>` : ""}
+      <p class="muted" style="margin-top:.4rem">단원을 눌러 복습하기</p>
+    </div>
+    <button id="reset" class="center muted" style="border:none;background:none;font-size:.9rem">기록 모두 지우기 (점수 0점으로)</button>`;
 }
 
 // ---------- 연습 ----------
@@ -323,12 +518,19 @@ function question() {
   const exp = `<strong>정답 ${ans(q, q.answer)}</strong><br>${esc(q.exp)}${more(q)}`;
   const next = () => { if (last) return result(); s.i++; s.picked = 0; s.checked = false; s.tried = []; question(); };
   if (!s.checked) return dock(`<button id="check" class="main" ${s.picked ? "" : "disabled"}>정답 확인</button>`, { "#check": check });
+  const kept = q.id in store.saved, l = lessonOf(q);
+  const th = l ? `<button id="theory" class="center">이론 보기 · ${esc(l.title)}</button>` : "";
   if (s.ok) return dock(`<h2>정답이에요!</h2><div class="exp">${exp}</div>${note}
-    <button id="next" class="main">${last ? "결과 보기" : "다음 문제"}</button>`, { "#next": next }, "ok");
+    <div class="split" style="grid-template-columns:1.3fr 1fr"><button id="keep" class="center" style="font-weight:700;white-space:nowrap;padding-inline:.4rem;font-size:min(1rem, 3.9vw)" aria-pressed="${kept}">${bm(kept)}${kept ? "저장했어요" : "저장 (나중에 다시 보기)"}</button><button id="next" class="main">${last ? "결과 보기" : "다음 문제"}</button></div>${th}`, {
+    "#theory": () => theory(l),
+    "#keep": () => { kept ? delete store.saved[q.id] : (store.saved[q.id] = Date.now()); save(); question(); },
+    "#next": next,
+  }, "ok");
   // 오답: 정답은 접어 두고, 같은 문제를 다시 풀거나 다음으로
   dock(`<h2>아쉬워요, 오답이에요</h2>${note}
     <details class="exp"><summary><strong>정답과 해설 보기</strong></summary>${exp}</details>
-    <div class="split"><button id="redo" class="center">다시 풀기</button><button id="next" class="main">다음으로</button></div>`, {
+    <div class="split"><button id="redo" class="center">다시 풀기</button><button id="next" class="main">다음으로</button></div>${th}`, {
+    "#theory": () => theory(l),
     "#redo": () => { s.picked = 0; s.checked = false; question(); },
     "#next": next,
   }, "bad");
@@ -381,29 +583,46 @@ function result() {
 }
 
 function notes(mode) {
-  const review = mode === "review", ids = (review ? reviewIds() : wrongIds())
-    .sort((a, b) => store.wrong[b].count - store.wrong[a].count || store.wrong[b].at - store.wrong[a].at);
+  const review = mode === "review", saved = mode === "saved";
+  const ids = saved ? savedIds() : (review ? reviewIds() : wrongIds()).sort((a, b) => store.wrong[b].count - store.wrong[a].count || store.wrong[b].at - store.wrong[a].at);
   show(`
     <div class="row"><button id="back" aria-label="뒤로" class="back">←</button>
-      <button class="chip" data-mode="wrong" aria-pressed="${!review}">오답노트 ${wrongIds().length}</button>
-      <button class="chip" data-mode="review" aria-pressed="${review}">다시보기 ${reviewIds().length}</button></div>
-    <p class="muted">${review ? "한 번이라도 틀린 문제는 맞혀도 여기에 남아요." : "다시 풀어서 맞히면 오답노트에서 빠지고, 다시보기에는 남아요."}</p>
-    ${ids.length ? `<button id="retry" class="main">${ids.length}문제 다시 풀기</button>`
-      : `<p class="card muted center" style="padding:2.5rem 1rem">${review ? "아직 틀린 적 있는 문제가 없어요." : "지금 못 맞힌 문제가 없어요."}<br>문제를 풀다 틀리면 여기에 자동으로 저장돼요.</p>`}
-    ${ids.map(id => { const q = byId[id], w = store.wrong[id]; return `
+      <button class="chip" data-mode="wrong" aria-pressed="${mode === "wrong"}">오답노트 ${wrongIds().length}</button>
+      <button class="chip" data-mode="review" aria-pressed="${review}">다시보기 ${reviewIds().length}</button>
+      <button class="chip" data-mode="saved" aria-pressed="${saved}">저장 ${savedIds().length}</button></div>
+    <p class="muted">${saved ? "맞힌 뒤 '저장'을 누른 문제예요." : review ? "한 번이라도 틀린 문제는 맞혀도 여기에 남아요." : "다시 풀어서 맞히면 오답노트에서 빠지고, 다시보기에는 남아요."}</p>
+    ${ids.length ? `<div class="split"><button id="slow" class="center">하나씩 보기</button><button id="retry" class="main">다시 풀기 ${ids.length}</button></div>`
+      : `<p class="card muted center" style="padding:2.5rem 1rem">${saved ? "저장한 문제가 없어요.<br>맞힌 문제에서 '저장'을 누르면 여기에 모여요." : `${review ? "아직 틀린 적 있는 문제가 없어요." : "지금 못 맞힌 문제가 없어요."}<br>문제를 풀다 틀리면 여기에 자동으로 저장돼요.`}</p>`}
+    ${ids.map(id => { const q = byId[id], w = store.wrong[id] || {}; return `
       <div class="card stack">
-        <div class="row"><span class="tag">${q.subject}과목 · ${esc(q.topic)}</span>${q.exam ? `<span class="tag todo">실전 ${q.exam}</span>` : q.trap ? `<span class="tag todo">함정</span>` : ""}<span class="tag bad">${w.count}번 틀림</span>${w.cleared ? `<span class="tag ok">지금은 맞힘</span>` : ""}</div>
+        <div class="row"><span class="tag">${q.subject}과목 · ${esc(q.topic)}</span>${q.exam ? `<span class="tag todo">실전 ${q.exam}</span>` : q.trap ? `<span class="tag todo">함정</span>` : ""}${w.count ? `<span class="tag bad">${w.count}번 틀림</span>` : ""}${w.cleared ? `<span class="tag ok">지금은 맞힘</span>` : ""}</div>
         <strong>${esc(q.q)}</strong>${code(q)}
-        <span style="color:var(--bad)">마지막 오답 ${ans(q, w.picked)}</span>
+        ${saved ? "" : `<span style="color:var(--bad)">마지막 오답 ${ans(q, w.picked)}</span>`}
         <strong style="color:var(--ok)">정답 ${ans(q, q.answer)}</strong>
         <details><summary class="muted">해설 보기</summary><p style="margin-top:.4rem">${esc(q.exp)}</p>${more(q)}</details>
-        <button data-del="${id}" class="muted" style="align-self:flex-end;border:0;padding:.2rem;text-decoration:underline">${review ? "다시보기에서 빼기" : "오답노트에서 빼기"}</button>
+        <button data-del="${id}" class="muted" style="align-self:flex-end;border:0;padding:.2rem;text-decoration:underline">${saved ? "저장에서 빼기" : review ? "다시보기에서 빼기" : "오답노트에서 빼기"}</button>
       </div>`; }).join("")}`, {
     "#back": home,
     "[data-mode]": b => notes(b.dataset.mode),
     "#retry": () => start(shuffle(ids.map(id => byId[id])), true),
-    "[data-del]": b => { if (review) delete store.wrong[b.dataset.del]; else store.wrong[b.dataset.del].cleared = true; save(); notes(mode); },
+    "#slow": () => slow(mode, ids),
+    "[data-del]": b => { if (saved) delete store.saved[b.dataset.del]; else if (review) delete store.wrong[b.dataset.del]; else store.wrong[b.dataset.del].cleared = true; save(); notes(mode); },
   });
+}
+
+// 하나씩 보기: 목록의 문제를 한 장씩 천천히 (보기마다 정답·내 오답 표시, 해설 펼쳐 둠)
+function slow(mode, ids, i = 0) {
+  const q = byId[ids[i]], w = store.wrong[ids[i]] || {};
+  show(`
+    <div class="row bar"><button id="out" aria-label="나가기" class="back">✕</button><strong>${i + 1} / ${ids.length}</strong><span class="muted">하나씩 보기</span></div>
+    <div class="card stack" style="padding:1.5rem 1.25rem">
+      <span class="tag" style="align-self:flex-start">${q.subject}과목 · ${esc(q.topic)}</span>
+      <h2>${esc(q.q)}</h2>${code(q)}
+      ${q.options.map((o, k) => `<p style="${k + 1 === q.answer ? "color:var(--ok);font-weight:700" : k + 1 === w.picked ? "color:var(--bad)" : ""}">${C[k]} ${esc(o)}${k + 1 === q.answer ? " · 정답" : k + 1 === w.picked ? " · 내가 고른 답" : ""}</p>`).join("")}
+      <p>${esc(q.exp)}</p>${more(q)}
+    </div>`, { "#out": () => notes(mode) });
+  dock(`<div class="split"><button id="prev" class="center" ${i ? "" : "disabled"}>이전</button><button id="next" class="main">${i + 1 < ids.length ? "다음" : "끝 · 목록으로"}</button></div>`,
+    { "#prev": () => slow(mode, ids, i - 1), "#next": () => (i + 1 < ids.length ? slow(mode, ids, i + 1) : notes(mode)) });
 }
 
 // ---------- 실전 모의고사: 90분 타이머, 답안지, 제출 후 한 번에 채점 ----------
@@ -489,7 +708,7 @@ function review(n, f = "all") {
   const cnt = k => qs.filter(q => k === "all" || mark(q) === k).length;
   const LABEL = { ok: ["맞힘", "ok"], bad: ["틀림", "bad"], none: ["안 풂", "todo"] };
   show(`
-    <div class="row"><button id="back" aria-label="뒤로" class="back">←</button><h2>실전 모의고사${EXAMS.length > 1 ? ` ${n}` : ""} 결과</h2></div>
+    <div class="row"><button id="back" aria-label="뒤로" class="back">←</button><h2>${examName(n)} 결과</h2></div>
     <div class="card stack center" style="align-items:center;gap:.3rem">
       <div class="big" style="font-size:3.2rem">${rec.score}<span class="muted" style="font-size:1.2rem">점</span></div>
       <span class="tag ${rec.pass ? "ok" : "bad"}" style="font-size:1rem">${rec.pass ? "합격" : rec.score >= 60 ? "불합격 (과락)" : "불합격"}</span>
